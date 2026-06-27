@@ -60,21 +60,57 @@ function saveUserToDatabase(PDO $pdo, array $userParams): int
         'phone' => $userParams['phone'],
         'avatar_path' => $userParams['avatar_path']
     ]);
-    $number = $pdo -> lastInsertId();
+    $number = $pdo->lastInsertId();
     if ($number === false) {
         throw new RuntimeException('Unable to get the id of the added user.');
     }
     return $number;
 }
 
+function findUserInDatabase(PDO $pdo, int $userId): ?array
+{
+    $query = "SELECT `first_name`, `last_name`, `middle_name`, `gender`, `birth_date`, `email`, `phone`, `avatar_path`
+              FROM `user` WHERE `user_id` = :user_id;";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([
+        'user_id' => $userId
+    ]);
+    $dataArr = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (empty($dataArr)) {
+        return null;
+    } else {
+        return $dataArr;
+    }
+}
+
+function print_arr(array $arr) {
+    foreach ($arr[0] as $key => $value) {
+        echo "$key = $value <br>";
+    }
+}
+
+
+
 
 
 try {
     $database = connectDatabase();
-    $user = getConnectionParams();
-    echo saveUserToDatabase($database, $user);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $user = getConnectionParams();
+        $userId = saveUserToDatabase($database, $user);
+
+        $redirectUrl = "/work_database.php?user_id=$userId";
+        header('Content-Type: application/json');
+        echo json_encode(['redirect' => $redirectUrl]);
+        die();
+    }
+    elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        print_arr(findUserInDatabase($database, $_GET['user_id']));
+    }
 } catch (PDOException $error) {
     echo $error->getMessage();
 } catch (RuntimeException $error) {
     echo $error->getMessage();
 }
+
+
