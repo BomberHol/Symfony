@@ -6,7 +6,7 @@
         <script src="parsing_form.js" defer></script>
     </head>
     <body>
-        <form action="work_database.php" method="POST" class="user-form">
+        <form action="index.php" method="POST" class="user-form">
             <p>Имя</p>
             <input type="text" name="first_name">
             

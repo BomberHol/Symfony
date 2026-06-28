@@ -13,7 +13,7 @@
         console.log(dataJson);
         
         try {
-            let response = await fetch('work_database.php', {
+            let response = await fetch('index.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'
@@ -25,7 +25,7 @@
             if (data.redirect) {
                 window.location.href = data.redirect;
             }
-        } catch (errro) {
+        } catch (error) {
             console.error('Ошибка запроса:', error);
         }
     })

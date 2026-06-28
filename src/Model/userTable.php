@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../Model/user.php';
+
 class UserTable 
 {
     private PDO $connection;
@@ -30,8 +32,6 @@ class UserTable
         }
         return $userId;
     }
-    
-
 
     public function findUserInDatabase(int $userId): ?User
     {
