@@ -75,21 +75,15 @@ function findUserInDatabase(PDO $pdo, int $userId): ?array
     $stmt->execute([
         'user_id' => $userId
     ]);
-    $dataArr = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if (empty($dataArr)) {
-        return null;
-    } else {
-        return $dataArr;
-    }
+    $dataArr = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $dataArr ?: null;
 }
 
 function print_arr(array $arr) {
-    foreach ($arr[0] as $key => $value) {
-        echo "$key = $value <br>";
+    foreach ($arr as $key => $value) {
+        echo htmlspecialchars($key) . ' = ' . htmlspecialchars($value) . '<br>';
     }
 }
-
-
 
 
 
@@ -105,12 +99,13 @@ try {
         die();
     }
     elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        print_arr(findUserInDatabase($database, $_GET['user_id']));
+        $user = findUserInDatabase($database, $_GET['user_id']);
+        if ($user) {
+            print_arr($user);
+        }
     }
 } catch (PDOException $error) {
     echo $error->getMessage();
 } catch (RuntimeException $error) {
     echo $error->getMessage();
 }
-
-

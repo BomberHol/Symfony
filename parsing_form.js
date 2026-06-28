@@ -1,5 +1,5 @@
 {
-    document.querySelector('.user-form').addEventListener('submit', function (event) {
+    document.querySelector('.user-form').addEventListener('submit', async function (event) {
         event.preventDefault();
 
         const formData = new FormData(this);
@@ -11,22 +11,22 @@
 
         let dataJson = JSON.stringify(dataObj);
         console.log(dataJson);
+        
+        try {
+            let response = await fetch('work_database.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                body: dataJson
+            });
 
-        fetch('work_database.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=UTF-8'
-            },
-            body: dataJson
-        })
-        .then(response => response.json())
-        .then(data=>{
+            let data = await response.json();
             if (data.redirect) {
                 window.location.href = data.redirect;
             }
-        })
-        .catch(error=>{
+        } catch (errro) {
             console.error('Ошибка запроса:', error);
-        })
+        }
     })
 }
