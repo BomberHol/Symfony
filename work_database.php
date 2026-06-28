@@ -1,6 +1,7 @@
 <?php
 
 require_once 'user.php';
+require_once 'user_table.php';
 
 CONST PATH_CONF = './config.ini';
 
@@ -47,46 +48,7 @@ function getNewUserFromForm(): User
     return new User(null, $data['first_name'], $data['last_name'], $data['middle_name'], $data['gender'], $data['birth_date'], $data['email'], $data['phone'], $data['avatar_path']);
 }
 
-function saveUserToDatabase(PDO $pdo, User $user): int
-{
-    $query = "INSERT INTO `user` (`first_name`, `last_name`, `middle_name`, `gender`, `birth_date`, `email`, `phone`, `avatar_path`)
-              VALUES (:first_name, :last_name, :middle_name, :gender, :birth_date, :email, :phone, :avatar_path);";
-    $stmt = $pdo -> prepare($query);
-    $stmt -> execute([
-        'first_name' => $user->getFirstName(),
-        'last_name' => $user->getLastName(),
-        'middle_name' => $user->getMiddleName(),
-        'gender' => $user->getGender(),
-        'birth_date' => $user->getBirthDate(),
-        'email' => $user->getEmail(),
-        'phone' => $user->getPhone(),
-        'avatar_path' => $user->getAvatarPath()
-    ]);
-    $userId = $pdo->lastInsertId();
-    if ($userId === false) {
-        throw new RuntimeException('Unable to get the id of the added user.');
-    }
-    return $userId;
-}
-
-function findUserInDatabase(PDO $pdo, int $userId): ?User
-{
-    $query = "SELECT `first_name`, `last_name`, `middle_name`, `gender`, `birth_date`, `email`, `phone`, `avatar_path`
-              FROM `user` WHERE `user_id` = :user_id;";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([
-        'user_id' => $userId
-    ]);
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($data) {
-        return new User($userId, $data['first_name'], $data['last_name'], $data['middle_name'], $data['gender'], $data['birth_date'], $data['email'], $data['phone'], $data['avatar_path']);
-    } else {
-        return null;
-    }
-}
-
-function print_arr(User $user) {
+function print_user(User $user) {
     echo 'first_name = ' . htmlspecialchars($user->getFirstName()) . '<br>';
     echo 'last_name = ' . htmlspecialchars($user->getLastName()) . '<br>';
     echo 'middle_name = ' . htmlspecialchars($user->getMiddleName()) . '<br>';
@@ -98,22 +60,25 @@ function print_arr(User $user) {
 }
 
 
-
 try {
-    $database = connectDatabase();
+    $userTable = new UserTable(connectDatabase());
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = getNewUserFromForm();
-        $userId = saveUserToDatabase($database, $user);
-
+        $userId = $userTable->saveUserToDatabase($user);
+        
         $redirectUrl = "/work_database.php?user_id=$userId";
         header('Content-Type: application/json');
         echo json_encode(['redirect' => $redirectUrl]);
         die();
     }
     elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $user = findUserInDatabase($database, $_GET['user_id']);
+        if (!isset($_GET['user_id'])) {
+            throw new RuntimeException('The user ID was not passed.');
+        }
+        $user = $userTable->findUserInDatabase($_GET['user_id']);
         if ($user) {
-            print_arr($user);
+            print_user($user);
         }
     }
 } catch (PDOException $error) {
