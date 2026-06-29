@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Model;
+
 class ConnectionProvider
 {
     private const PATH_CONF = './config.ini';
@@ -20,16 +22,16 @@ class ConnectionProvider
         return $config;
     }
 
-    public static function connectDatabase(): PDO
+    public static function connectDatabase(): \PDO
     {
         $config = ConnectionProvider::connectConfig();
         $dsn = 'mysql:host=' . $config['host'] . ';dbname=' . $config['dbname'] . ';';
         $user = $config['user'];
         $password = $config['password'];
         $option = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
         ];
 
-        return new PDO($dsn, $user, $password, $option);
+        return new \PDO($dsn, $user, $password, $option);
     }
 }

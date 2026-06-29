@@ -1,12 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../Model/user.php';
+namespace App\Model;
+
+use App\Model\User;
 
 class UserTable 
 {
-    private PDO $connection;
+    private \PDO $connection;
 
-    public function __construct(PDO $connection) 
+    public function __construct(\PDO $connection) 
     {
         $this->connection = $connection;
     }
@@ -41,7 +43,7 @@ class UserTable
         $stmt->execute([
             'user_id' => $userId
         ]);
-        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if ($data) {
             return new User($userId, $data['first_name'], $data['last_name'], $data['middle_name'], $data['gender'], $data['birth_date'], $data['email'], $data['phone'], $data['avatar_path']);

@@ -1,7 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../Model/connectionProvider.php';
-require_once __DIR__ . '/../Model/userTable.php';
+namespace App\Controller;
+
+use App\Model\ConnectionProvider;
+use App\Model\UserTable;
+use App\Model\User;
 
 class UserController 
 {

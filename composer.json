@@ -1,0 +1,14 @@
+{
+    "name": "bomber-hol/symfony",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "BomberHol"
+        }
+    ],
+    "require": {}
+}
