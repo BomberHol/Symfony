@@ -23,7 +23,34 @@ class UserController
     {
         RequestHelper::post('/api/users/avatar') && $this->saveImage();  
         RequestHelper::post('/api/users/profile') && $this->addUser();   
+        RequestHelper::patch('/api/updateDataUser') && $this->updateDataUser(); 
+        RequestHelper::delete('/api/deleteUser') && $this->deleteUser(); 
         RequestHelper::get('user_id') ? $this->showUser($_GET['user_id']) : $this->index();  
+        
+    }
+
+    private function deleteUser() {
+        $userId = $_GET['user_id'];
+        $this->userTable->deleteUserInDatabase($userId);
+        $redirectUrl = "/index.php";
+        header('Content-Type: application/json');
+        echo json_encode(['redirect' => $redirectUrl]);
+        die(); 
+    }
+
+    private function updateDataUser()
+    {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        $userId = $this->userTable->updateUserInDatabase($data);
+
+        $redirectUrl = "/index.php?user_id=$userId";
+        header('Content-Type: application/json');
+        echo json_encode(['redirect' => $redirectUrl]);
+        die(); 
+        // исключение?
+          
+
     }
     
     private function saveImage(): void

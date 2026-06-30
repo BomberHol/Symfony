@@ -51,4 +51,35 @@ class UserTable
         return null;
        
     }
+
+    public function updateUserInDatabase(array $data): int
+    {
+        $query = "UPDATE user
+                  SET `first_name` = :first_name, `last_name` = :last_name, `middle_name` = :middle_name, `gender` = :gender, `birth_date` = :birth_date, `email` = :email, `phone` = :phone, `avatar_path` = :avatar_path
+                  WHERE `user_id` = :user_id;";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([
+            'user_id' => $data['user_id'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'middle_name' => $data['middle_name'],
+            'gender' => $data['gender'],
+            'birth_date' => $data['birth_date'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'avatar_path' => $data['avatar_path']
+        ]);
+        return (int)$data['user_id'];
+    }
+
+    public function deleteUserInDatabase(int $userId): bool
+    {
+        $query = "DELETE FROM user WHERE `user_id` = :user_id";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([
+            'user_id' => $userId
+        ]);
+
+        return $stmt->rowCount() > 0;
+    }
 }
