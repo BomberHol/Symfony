@@ -3,7 +3,8 @@
     <head>
         <title>Symfony</title>
         <meta charset="UTF-8">
-        <script src="parsing_form.js" defer></script>
+        <script src="js/parsing_form.js" defer></script>
+        <script src="js/getAvatar.js" defer></script>
     </head>
     <body>
         <form action="index.php" method="POST" class="user-form">
@@ -29,9 +30,11 @@
             <input type="tel" inputmode="tel" name="phone">
 
             <p>Фото</p>
-            <input type="text" name="avatar_path">
+            <input type="file" name="avatar">
 
-            <input type="submit" value="Отправить">
+            <input type="hidden" name="avatar_path">
+
+            <input type="submit" accept="image/png, image/jpeg, image/gif" value="Отправить">
         </form>
     </body>
 </html>

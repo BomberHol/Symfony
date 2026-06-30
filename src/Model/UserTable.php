@@ -30,7 +30,7 @@ class UserTable
         ]);
         $userId = $this->connection->lastInsertId();
         if ($userId === false) {
-            throw new RuntimeException('Unable to get the id of the added user.');
+            throw new \RuntimeException('Unable to get the id of the added user.');
         }
         return $userId;
     }

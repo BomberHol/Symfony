@@ -3,28 +3,30 @@
         event.preventDefault();
 
         const formData = new FormData(this);
-        const dataObj = {};
+        const formDataObj = {};
 
         formData.forEach((value, key) => {
-            dataObj[key] = value;
+            if (key !== 'avatar') {
+                console.log(key, ' ', value);
+                formDataObj[key] = value;
+            }
         });
-
-        let dataJson = JSON.stringify(dataObj);
-        console.log(dataJson);
         
         try {
-            let response = await fetch('index.php', {
+            let formDataJson = JSON.stringify(formDataObj);
+            let response = await fetch('api/users/profile', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json; charset=UTF-8'
                 },
-                body: dataJson
+                body: formDataJson
             });
-
-            let data = await response.json();
+            console.log(response);
+            const data = await response.json();
             if (data.redirect) {
                 window.location.href = data.redirect;
             }
+
         } catch (error) {
             console.error('Ошибка запроса:', error);
         }

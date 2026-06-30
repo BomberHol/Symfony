@@ -8,7 +8,7 @@ class ConnectionProvider
 
     private static function connectConfig(): array {
         if (!file_exists(self::PATH_CONF)) {
-            throw new RuntimeException('The ' . PATH_CONF . ' does not exist');
+            throw new \RuntimeException('The ' . PATH_CONF . ' does not exist');
         }
 
         $config = parse_ini_file(self::PATH_CONF);
@@ -16,7 +16,7 @@ class ConnectionProvider
         $requiredKeysConf = ['host', 'dbname', 'user', 'password'];
         foreach ($requiredKeysConf as $key) {
             if (!isset($config[$key])) {
-                throw new RuntimeException("The $key field is missing in the config.");
+                throw new \RuntimeException("The $key field is missing in the config.");
             }
         }
         return $config;
